@@ -1,5 +1,5 @@
 DB_CONFIG = {
-    "dbname": "Steam Games Dataset",
+    "dbname": "SteamGamesDataset",
     "user": "postgres",
     "password": "1234",
     "host": "localhost",

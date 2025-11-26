@@ -55,13 +55,26 @@ def insert_related(cur, appid, game):
     # DEVELOPERS
     for dev in game.get("developers", []):
         cur.execute(
-            "INSERT INTO developers (developer_name) VALUES (%s) RETURNING id;",
+            """INSERT INTO developers (developer_name) VALUES (%s)
+                ON CONFLICT (developer_name) DO NOTHING 
+                RETURNING id;""",
             (dev,)
         )
-        dev_id = cur.fetchone()[0]
+        try:
+            dev_id = cur.fetchone()[0]
+        except:
+            dev_id = None
+
+        if dev_id is None:
+            cur.execute(
+                "SELECT id FROM developers WHERE developer_name = %s;",
+                (dev,)
+            )
+            dev_id = cur.fetchone()[0]
 
         cur.execute(
-            "INSERT INTO developers_game (id_developer, id_game) VALUES (%s, %s);",
+            """INSERT INTO developers_game (id_developer, id_game) VALUES (%s, %s) 
+                ON CONFLICT DO NOTHING;""",
             (dev_id, appid)
         )
 
@@ -120,18 +133,28 @@ def insert_related(cur, appid, game):
         )
 
     # TAGS
-    for tag in game.get("tags", []):
+    tag_dict = game.get("tags_dict", {})
+    for tag_name, tag_score in tag_dict.items():
         cur.execute(
-            "INSERT INTO tags (tag_value) VALUES (%s) RETURNING id;",
-            (str(tag),)
+            "INSERT INTO tags (tag_name) VALUES (%s) ON CONFLICT (tag_name) DO NOTHING RETURNING id;",
+            (str(tag_name),)
         )
-        tag_id = cur.fetchone()[0]
+        try:
+            tag_id = cur.fetchone()[0]
+        except:
+            tag_id = None
+
+        if tag_id is None:
+            cur.execute(
+                "SELECT id FROM tags WHERE tag_name = %s;",
+                (str(tag_name),)
+            )
+            tag_id = cur.fetchone()[0]
 
         cur.execute(
-            "INSERT INTO tags_game (id_tag, id_game) VALUES (%s, %s);",
-            (tag_id, appid)
+            "INSERT INTO tags_game (id_tag, id_game, tag_score) VALUES (%s, %s, %s);",
+            (tag_id, appid, tag_score)
         )
-
 
 # =====================================================================
 # IMPORT PRINCIPAL

@@ -62,7 +62,7 @@ def create_tables():
 
         CREATE TABLE developers (
             id SERIAL PRIMARY KEY,
-            developer_name TEXT not null
+            developer_name TEXT unique not null
         );
 
         create table developers_game (
@@ -131,12 +131,13 @@ def create_tables():
 
         CREATE TABLE tags (
             id SERIAL PRIMARY KEY,
-            tag_value TEXT not null
+            tag_name TEXT unique not null
         );
 
         create table tags_game (
-            id_tag int, 
+            id_tag int,
             id_game int,
+            tag_score int,
             primary key (id_tag, id_game),
             foreign KEY (id_tag) references tags (id) on delete cascade,
             FOREIGN KEY (id_game) REFERENCES games (appid) ON DELETE cascade
