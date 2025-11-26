@@ -17,8 +17,6 @@ def create_tables():
             dlc_count          INTEGER,
             detailed_description TEXT,
             short_description  TEXT,
-            supported_languages TEXT,
-            full_audio_languages TEXT,
             reviews            TEXT,
             header_image       TEXT,
             website            TEXT,
@@ -141,6 +139,32 @@ def create_tables():
             primary key (id_tag, id_game),
             foreign KEY (id_tag) references tags (id) on delete cascade,
             FOREIGN KEY (id_game) REFERENCES games (appid) ON DELETE cascade
+        );
+        
+        CREATE TABLE languages (
+            id SERIAL PRIMARY KEY,
+            language_name TEXT UNIQUE NOT NULL
+        );
+                
+        CREATE TABLE languages_game (
+            id_language INT,
+            id_game INT,
+            PRIMARY KEY (id_language, id_game),
+            FOREIGN KEY (id_language) REFERENCES languages(id) ON DELETE CASCADE,
+            FOREIGN KEY (id_game) REFERENCES games(appid) ON DELETE CASCADE
+        );
+        
+        CREATE TABLE audio_languages (
+            id SERIAL PRIMARY KEY,
+            audio_language_name TEXT UNIQUE NOT NULL
+        );
+                
+        CREATE TABLE languages_game (
+            id_audio INT,
+            id_game INT,
+            PRIMARY KEY (id_audio, id_game),
+            FOREIGN KEY (id_audio) REFERENCES audio_languages(id) ON DELETE CASCADE,
+            FOREIGN KEY (id_game) REFERENCES games(appid) ON DELETE CASCADE
         );
         """
     )

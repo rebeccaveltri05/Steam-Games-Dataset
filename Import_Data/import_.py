@@ -133,7 +133,7 @@ def insert_related(cur, appid, game):
         )
 
     # TAGS
-    tag_dict = game.get("tags_dict", {})
+    tag_dict = game.get("tags", {})
     for tag_name, tag_score in tag_dict.items():
         cur.execute(
             "INSERT INTO tags (tag_name) VALUES (%s) ON CONFLICT (tag_name) DO NOTHING RETURNING id;",
@@ -154,6 +154,50 @@ def insert_related(cur, appid, game):
         cur.execute(
             "INSERT INTO tags_game (id_tag, id_game, tag_score) VALUES (%s, %s, %s);",
             (tag_id, appid, tag_score)
+        )
+
+    for lang in game.get("supported_languages", []):
+        cur.execute(
+            "INSERT INTO languages (language_name) VALUES (%s) ON CONFLICT (language_name) DO NOTHING RETURNING id;",
+            (lang,)
+        )
+        try:
+            lang_id = cur.fetchone()[0]
+        except:
+            lang_id = None
+
+        if lang_id is None:
+            cur.execute(
+                "SELECT id FROM languages WHERE language_name = %s;",
+                (lang,)
+            )
+            lang_id = cur.fetchone()[0]
+
+        cur.execute(
+            "INSERT INTO languages_game (id_language, id_game) VALUES (%s, %s) ON CONFLICT DO NOTHING;",
+            (lang_id, appid)
+        )
+    
+    for audio_lang in game.get("full_audio_languages", []):
+        cur.execute(
+            "INSERT INTO audio_languages (audio_language_name) VALUES (%s) ON CONFLICT (audio_language_name) DO NOTHING RETURNING id;",
+            (audio_lang,)
+        )
+        try:
+            audio_id = cur.fetchone()[0]
+        except:
+            audio_id = None
+
+        if audio_id is None:
+            cur.execute(
+                "SELECT id FROM audio_languages WHERE audio_language_name = %s;",
+                (audio_lang,)
+            )
+            audio_id = cur.fetchone()[0]
+
+        cur.execute(
+            "INSERT INTO audio_languages_game (id_audio, id_game) VALUES (%s, %s) ON CONFLICT DO NOTHING;",
+            (audio_id, appid)
         )
 
 # =====================================================================
