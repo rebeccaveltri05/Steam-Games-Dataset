@@ -1,0 +1,2 @@
+# Arquivo CSV base
+
