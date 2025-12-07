@@ -6,45 +6,68 @@ def create_tables():
     cur = conn.cursor()
  
     cur.execute("""
-       CREATE TABLE games (
+        CREATE TABLE games (
             appid              INTEGER PRIMARY KEY,
             name               TEXT not null,
             release_date       DATE not null,
-            estimated_owners   TEXT,
-            peak_ccu           INTEGER,
-            required_age       INTEGER,
-            price              NUMERIC,
-            dlc_count          INTEGER,
-	        about_the_game       TEXT,
-            header_image         TEXT,
-            website              TEXT,
-            support_url          TEXT,
-            support_email        TEXT,
-            windows            BOOLEAN,
-            mac                BOOLEAN,
-            linux              BOOLEAN,
-            metacritic_score   INTEGER,
-            metacritic_url     TEXT,
-            user_score         INTEGER,
-            positive           INTEGER,
-            negative           INTEGER,
-            score_rank         TEXT,
-            achievements       INTEGER,
-            recommendations    INTEGER,
-            notes              TEXT,
+            required_age       INTEGER not null,
+            price              NUMERIC not null,
+	        about_the_game       TEXT not null,
+            header_image         TEXT not null,
+            website              TEXT
+        );
+	
+        CREATE TABLE detalhes (
+            id_game                  int primary key,
+            owners_min               INTEGER,
+            owners_max               INTEGER,   
+            peak_ccu                 INTEGER,
+            dlc_count                INTEGER,
             average_playtime_forever INTEGER,
             average_playtime_2weeks  INTEGER,
             median_playtime_forever  INTEGER,
-            median_playtime_2weeks   INTEGER
+            median_playtime_2weeks   INTEGER,
+            notes                    TEXT,
+            recommendations          INTEGER,
+            achievements             INTEGER,
+            support_url              TEXT,
+            support_email            TEXT,
+            metacritic_score         INTEGER,
+            metacritic_url           TEXT,
+            positive		         INTEGER,
+            negative                 INTEGER,
+            user_score               INTEGER, 
+            score_rank               INTEGER,
+            FOREIGN KEY (id_game) REFERENCES games(appid) ON UPDATE CASCADE ON DELETE CASCADE
         );
 
-	CREATE TABLE reviews (
-           id_review      SERIAL PRIMARY KEY,
-           id_game        INT NOT NULL,
-           review_text    TEXT NOT NULL,
-           review_author  VARCHAR(255) NOT NULL,
+        CREATE TYPE os_enum AS ENUM ('windows', 'mac', 'linux');
 
-           FOREIGN KEY (id_game) REFERENCES games (appid) ON UPDATE CASCADE ON DELETE CASCADE
+        CREATE TABLE operation_systems (
+            id serial PRIMARY KEY,
+            so_name os_enum UNIQUE NOT NULL
+        );
+
+        CREATE TABLE operation_systems_games (
+            id_so int,
+            id_game int,
+            PRIMARY KEY (id_so, id_game),
+            FOREIGN KEY (id_so) REFERENCES operation_systems (id),
+            FOREIGN KEY (id_game) REFERENCES games (appid)
+        );
+
+        CREATE TABLE author (
+            id SERIAL PRIMARY KEY,
+            author_name TEXT UNIQUE NOT NULL
+        );
+                        
+        CREATE TABLE reviews_game (
+            id SERIAL PRIMARY KEY,
+            id_author      INT NOT NULL,
+            id_game        INT NOT NULL,
+            review_text    TEXT NOT NULL,
+            FOREIGN KEY (id_author) REFERENCES author (id) ON UPDATE CASCADE ON DELETE CASCADE,
+            FOREIGN KEY (id_game) REFERENCES games (appid) ON UPDATE CASCADE ON DELETE CASCADE
         );
 
         CREATE TABLE developers (
