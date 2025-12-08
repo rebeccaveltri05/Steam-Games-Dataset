@@ -1,6 +1,16 @@
 # Steam-Games-Dataset
 Repositório dedicado ao controle de versionamento do Banco de Dados "[Steam Games Dataset](https://www.kaggle.com/datasets/fronkongames/steam-games-dataset)".
 
+# Importação dos Dados
+- Instale o Python 3.12+ 
+- Clone o repositório
+- Crie um ambiente virtual na pasta raiz do projeto com o comando `py -m venv venv`
+- Ative o ambiente com o comando `venv\Scripts\activate`
+- Instale as libs necessárias com o comando `pip install psycopg2 ijson`
+- Ajuste o arquivo config.py colocando sua senha corretamente.
+- Rode o arquivo main.py
+- Espere a importação de todos registros acabarem
+- Pronto!
 # 📦 Entregável 1 — Dicionário de Dados Inicial (Concluído)
 
 ## Objetivo
@@ -32,9 +42,9 @@ Corrigir problemas estruturais, normalizar, ajustar relações e preparar um nov
   - [x] Estruturas inadequadas
   - [x] Tipos incorretos/inconsistentes
 - [x] Propor todas as correções necessárias
-- [ ] Aplicar as correções no banco
-- [ ] Criar um script de migração da versão antiga para a nova (preservando 100% dos dados)
-- [ ] Documentar e justificar cada modificação realizada
+- [x] Aplicar as correções no banco
+- [x] Criar um script de migração da versão antiga para a nova (preservando 100% dos dados)
+- [x] Documentar e justificar cada modificação realizada
 - [ ] Criar índices para todas as tabelas
   - [ ] Explicar utilidade dos índices para:
     - [ ] Performance

@@ -2,3 +2,4 @@ Import_Data/
 *.json
 venv
 Scripts normalização/DML/__pycache__
+Scripts normalização/DDL/__pycache__
