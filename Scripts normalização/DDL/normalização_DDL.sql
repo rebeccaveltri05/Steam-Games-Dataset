@@ -30,6 +30,7 @@ CREATE TABLE games (
             negative                 INTEGER NOT NULL DEFAULT 0,
             user_score               INTEGER, 
             score_rank               INTEGER,
+            CONSTRAINT chk_owners_min_max CHECK (owners_min <= owners_max),
             FOREIGN KEY (id_game) REFERENCES games(appid) ON UPDATE CASCADE ON DELETE CASCADE
         );
 
@@ -168,4 +169,13 @@ CREATE TABLE games (
             PRIMARY KEY (id_audio, id_game),
             FOREIGN KEY (id_audio) REFERENCES audio_languages(id) ON DELETE CASCADE,
             FOREIGN KEY (id_game) REFERENCES games(appid) ON DELETE CASCADE
+        );
+
+        CREATE TABLE game_price_history (
+            id SERIAL PRIMARY KEY,
+            id_game INTEGER NOT NULL,
+            old_price NUMERIC(10,2),
+            new_price NUMERIC(10,2),
+            changed_at TIMESTAMP DEFAULT NOW(),
+            FOREIGN KEY(id_game) REFERENCES games(appid)
         );

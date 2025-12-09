@@ -52,3 +52,18 @@ ALTER TABLE detalhes ALTER COLUMN positive SET NOT NULL;
 
 ALTER TABLE detalhes ALTER COLUMN negative SET DEFAULT 0;
 ALTER TABLE detalhes ALTER COLUMN negative SET NOT NULL;
+
+-- Nova constraint para estimeted_owners
+ALTER TABLE detalhes
+ADD CONSTRAINT chk_owners_min_max
+CHECK (owners_min <= owners_max);
+
+--Nova tabela para registro do histórico de preços
+CREATE TABLE game_price_history (
+            id SERIAL PRIMARY KEY,
+            id_game INTEGER NOT NULL,
+            old_price NUMERIC(10,2),
+            new_price NUMERIC(10,2),
+            changed_at TIMESTAMP DEFAULT NOW(),
+            FOREIGN KEY(id_game) REFERENCES games(appid)
+        );
