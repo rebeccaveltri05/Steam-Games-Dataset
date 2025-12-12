@@ -7,7 +7,7 @@ CREATE INDEX idx_games_name_lower ON games (lower(name));
 /* Muitos usuário filtram jogos pelo preço, por exemplo: jogos acima de 10 reais/dolares, jogos entre 50 a 100 reais, etc.
  Portanto, um índices  na coluna price seria de bom grado para otimizar essas buscas que envolvem preços.
  */
-CREATE INDEX idx_games_date ON games (price);
+CREATE INDEX idx_games_price ON games (price);
 
 /* Esses índices  tem bons casos de usos para criaçao de dashboards/relatórios e filtragem de jogos mais bem avaliados.
  Evita a demora na busca ordenada também, pois já vem ordenado do maior para o menor.

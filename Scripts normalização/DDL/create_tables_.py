@@ -4,8 +4,11 @@ from DML.config import DB_CONFIG
 def create_tables():
     conn = psycopg2.connect(**DB_CONFIG)
     cur = conn.cursor()
- 
-    cur.execute("""
+
+    cur.execute("SET search_path TO public;")
+    conn.commit()
+    
+    cur.execute("""       
         CREATE TABLE games (
             appid              SERIAL PRIMARY KEY,
             name               TEXT not null,

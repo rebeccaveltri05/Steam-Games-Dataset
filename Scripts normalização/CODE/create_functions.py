@@ -4,7 +4,9 @@ from DML.config import DB_CONFIG
 def create_functions():
     conn = psycopg2.connect(**DB_CONFIG)
     cur = conn.cursor()
- 
+    cur.execute("SET search_path TO public;")
+    conn.commit()
+	
     cur.execute("""
         CREATE OR REPLACE FUNCTION fn_similarity(gameA INT, gameB INT)
 		RETURNS NUMERIC AS $$

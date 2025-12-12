@@ -7,7 +7,7 @@ FROM (
         ge.genre_name AS genre,
         d.metacritic_score,
         d.metacritic_url,
-        ROW_NUMBER() OVER
+        ROW_NUMBER() OVER (
             PARTITION BY ge.genre_name
             ORDER BY d.metacritic_score DESC NULLS LAST
         ) AS metacritic_rank

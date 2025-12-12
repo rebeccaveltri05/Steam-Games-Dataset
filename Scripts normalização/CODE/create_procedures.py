@@ -4,7 +4,9 @@ from DML.config import DB_CONFIG
 def create_procedures():
     conn = psycopg2.connect(**DB_CONFIG)
     cur = conn.cursor()
- 
+    cur.execute("SET search_path TO public;")
+    conn.commit()
+    
     cur.execute("""
         CREATE OR REPLACE PROCEDURE pr_apply_publisher_discount(p_publisher_name TEXT, p_percentual_desconto NUMERIC)
         AS $$

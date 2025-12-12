@@ -355,7 +355,8 @@ def import_games():
 
     conn = psycopg2.connect(**DB_CONFIG)
     cur = conn.cursor()
-
+    cur.execute("SET search_path TO public;")
+    conn.commit()
     # Carregando JSON
     f = open(JSON_PATH, "rb")
 

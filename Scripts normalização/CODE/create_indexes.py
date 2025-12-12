@@ -4,10 +4,12 @@ from DML.config import DB_CONFIG
 def create_indexes():
     conn = psycopg2.connect(**DB_CONFIG)
     cur = conn.cursor()
- 
+    cur.execute("SET search_path TO public;")
+    conn.commit()
+
     cur.execute("""
         CREATE INDEX idx_games_name_lower ON games (lower(name));
-        CREATE INDEX idx_games_date ON games (price);
+        CREATE INDEX idx_games_price ON games (price);
         CREATE INDEX idx_detalhes_metacritic ON detalhes (metacritic_score DESC);
         CREATE INDEX idx_detalhes_user_score ON detalhes (user_score DESC);
         CREATE INDEX idx_reviews_id_game ON reviews_game (id_game);

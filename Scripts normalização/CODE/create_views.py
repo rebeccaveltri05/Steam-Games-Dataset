@@ -4,7 +4,9 @@ from DML.config import DB_CONFIG
 def create_views():
     conn = psycopg2.connect(**DB_CONFIG)
     cur = conn.cursor()
- 
+    cur.execute("SET search_path TO public;")
+    conn.commit()
+    
     cur.execute("""
         CREATE OR REPLACE VIEW view_metacritic_top3_per_genre AS
         SELECT *
@@ -15,7 +17,7 @@ def create_views():
                 ge.genre_name AS genre,
                 d.metacritic_score,
                 d.metacritic_url,
-                ROW_NUMBER() OVER
+                ROW_NUMBER() OVER (
                     PARTITION BY ge.genre_name
                     ORDER BY d.metacritic_score DESC NULLS LAST
                 ) AS metacritic_rank
