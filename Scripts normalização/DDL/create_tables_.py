@@ -7,7 +7,7 @@ def create_tables():
  
     cur.execute("""
         CREATE TABLE games (
-            appid              INTEGER PRIMARY KEY,
+            appid              SERIAL PRIMARY KEY,
             name               TEXT not null,
             release_date       DATE not null,
             required_age       INTEGER not null,

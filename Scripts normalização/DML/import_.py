@@ -43,7 +43,7 @@ def insert_enums(cur):
 # =====================================================================
 # INSERT PRINCIPAL (tabela games) 
 # =====================================================================
-def insert_game(cur, appid, game):
+def insert_game(cur, game):
     
     # Tratamentos Prévios
     # release_date: Se falhar a conversão, retornamos None
@@ -54,7 +54,6 @@ def insert_game(cur, appid, game):
     # Montagem do Dicionário com a Lógica de NULL
     clean_data = {
         # === TABELA GAMES (NOT NULL estritos) ===
-        "appid": appid,
         "name": treat_str(game.get("name"), can_be_null=False), # Nunca será NULL
         "release_date": data_lancamento, 
         "required_age": safe_int(game.get("required_age"), default=0),
@@ -69,7 +68,6 @@ def insert_game(cur, appid, game):
         "website": treat_str(game.get("website"), can_be_null=True), 
 
         # === TABELA DETALHES (Maioria Nullable) ===
-        "id_game": appid,
         "owners_min": own_min,
         "owners_max": own_max,
         "peak_ccu": safe_int(game.get("peak_ccu"), default=0),
@@ -101,7 +99,7 @@ def insert_game(cur, appid, game):
     }
 
     # Definição das colunas
-    cols_games = ["appid", "name", "release_date", "required_age", "price", 
+    cols_games = ["name", "release_date", "required_age", "price", 
                   "about_the_game", "header_image", "website"]
     
     cols_details = ["id_game", "owners_min", "owners_max", "peak_ccu", "dlc_count",
@@ -113,24 +111,33 @@ def insert_game(cur, appid, game):
 
     # Extraindo valores na ordem correta
     vals_games = [clean_data[c] for c in cols_games]
-    vals_details = [clean_data[c] for c in cols_details]
 
     # SQL Insert
     sql_games = f"""
         INSERT INTO games ({",".join(cols_games)})
         VALUES ({",".join(["%s"] * len(vals_games))})
-        ON CONFLICT (appid) DO NOTHING;
+        ON CONFLICT (appid) DO NOTHING
+        RETURNING appid;
     """
-    
-    sql_details = f"""
-        INSERT INTO detalhes ({",".join(cols_details)})
-        VALUES ({",".join(["%s"] * len(vals_details))})
-        ON CONFLICT (id_game) DO NOTHING;
-    """
-
     cur.execute(sql_games, vals_games)
-    cur.execute(sql_details, vals_details)
 
+    row = cur.fetchone()
+
+    if row:
+        id_game = row[0]
+        vals_details = [id_game] + [
+            clean_data[c] 
+            for c in cols_details 
+            if c != "id_game"
+        ]
+        sql_details = f"""
+            INSERT INTO detalhes ({",".join(cols_details)})
+            VALUES ({",".join(["%s"] * len(vals_details))})
+            ON CONFLICT (id_game) DO NOTHING;
+        """
+        cur.execute(sql_details, vals_details)
+
+    return id_game
 # =====================================================================
 # INSERTS RELACIONADOS
 # =====================================================================
@@ -351,16 +358,11 @@ def import_games():
 
     for appid, game in parser:
 
-        try:
-            appid = int(appid)
-        except:
-            continue
-
         # INSERIR NA TABELA PRINCIPAL
-        insert_game(cur, appid, game)
+        id_game = insert_game(cur, game)
 
         # INSERIR NAS TABELAS RELACIONADAS
-        insert_related(cur, appid, game)
+        insert_related(cur, id_game, game)
 
         count += 1
 

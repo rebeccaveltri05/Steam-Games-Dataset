@@ -3,7 +3,7 @@ from pathlib import Path
 DB_CONFIG = {
     "dbname": "Steam Games Dataset",
     "user": "postgres",
-    "password": "41414367",
+    "password": "1234",
     "host": "localhost",
     "port": 5432
 }
