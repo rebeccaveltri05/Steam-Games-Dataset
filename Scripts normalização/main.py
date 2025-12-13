@@ -5,6 +5,7 @@ from CODE.create_functions import create_functions
 from CODE.create_procedures import create_procedures
 from CODE.create_indexes import create_indexes
 from CODE.create_views import create_views
+from CODE.create_triggers import create_triggers
 
 
 if __name__ == "__main__":
@@ -33,6 +34,11 @@ if __name__ == "__main__":
         create_views()
     except Exception as e:
         print(f"Erro ao criar views: {e}")
+
+    try:
+        create_triggers()
+    except Exception as e:
+        print(f"Erro ao criar triggers: {e}")
 
     try:
         create_dw_tables()
